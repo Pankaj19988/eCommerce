@@ -30,13 +30,13 @@ const Product3Grid = () => {
   
   return (
     <div className='grid3 p-3 media-grid1 justify-content-center'>
-      <Link className='text-decoration-none' to='/list/man_nightwear'><Grid4upto item={item1} heading={heading1}/></Link>
+      <Link className='text-decoration-none hover-shadow-10' to='/list/man_nightwear'><Grid4upto item={item1} heading={heading1}/></Link>
       {/* <Grid4upto item={item2} heading={heading2}/> */}
       <div className="border-1px border-radius-5 box-shadow-1 cursor-pointer">
         <h1>Advertise</h1>
         <img/>
       </div>
-      <Link className='text-decoration-none' to='/list/woman_nightwear'><Grid4upto item={item3} heading={heading3}/></Link>
+      <Link className='text-decoration-none hover-shadow-10' to='/list/woman_nightwear'><Grid4upto item={item3} heading={heading3}/></Link>
     </div>
   )
 }

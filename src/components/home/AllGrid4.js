@@ -37,9 +37,9 @@ const AllGrid4 = () => {
 
   return (
     <div className='grid4 p-3 justify-content-center'>
-      <Link className='text-decoration-none text-dark' to={"/list/upto94"}><Product4Grid items={item1} gridHeading={heading1}/></Link>
-      <Link className='text-decoration-none text-dark' to={"/list/bestReview"}><Product4Grid items={item2} gridHeading={heading2}/></Link>
-      <Link className='text-decoration-none text-dark' to={"/list/uptoRS30"}><Product4Grid items={item3} gridHeading={heading3}/></Link>
+      <Link className='text-decoration-none text-dark hover-shadow-10' to={"/list/upto94"}><Product4Grid items={item1} gridHeading={heading1}/></Link>
+      <Link className='text-decoration-none text-dark hover-shadow-10' to={"/list/bestReview"}><Product4Grid items={item2} gridHeading={heading2}/></Link>
+      <Link className='text-decoration-none text-dark hover-shadow-10' to={"/list/uptoRS30"}><Product4Grid items={item3} gridHeading={heading3}/></Link>
       {/* <Link className='text-decoration-none text-dark' to={"/list"}><Product4Grid api={item4} gridHeading={heading4}/></Link> */}
       <div className='border-1px border-radius-5 box-shadow-1 cursor-pointer'>
         <h1>Advertise</h1>

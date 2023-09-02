@@ -5,21 +5,49 @@ import StarRatting from "./StarRatting";
 import ModelCenter from "./Components/ModelCenter";
 import AddressFill from "./AddressFill";
 import Button1 from "./Components/Button1";
+import axios from "axios"
 
 const YourCart = () => {
   
   const [selectQuantity, setSelectQuantity] = useState("1");
   const [quantity, setQuantity] = useState([]);
   const [adressModalShow,setAdressModalShow] = useState(false)
+  const [user,setUser] = useState({})
+  const getUser = async () => {
+    const userToken = await JSON.parse(localStorage.getItem("user"));
+   const  header = { 
+      'auth-token': userToken
+    }
+    if (localStorage.getItem("user")) {
+      await axios
+        .post(`http://localhost:8080/api/user/getuser`,null,{headers:header})
+        .then((response) => {
+          console.log(response.data._id);
+          setUser(response.data._id);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      console.log("please login first");
+    }
+  };
+  const getCartData = async () =>{
+
+  }
+
   useEffect(() => {
-    setQuantity(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]);
+    getUser();
   }, []);
+
+  
+  // useEffect(() => {
+  //   setQuantity(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]);
+  // }, []);
   return (
-    
-      
     <div className="display-flex gap-3 p-3 m-auto bg-fff justify-content-center">
       <div className=" d-flex flex-column gap-3 media-mb-1rem ">
-        {quantity.map((item, i) => (
+        {quantity?.map((item, i) => (
           <div key={i} className="bg-fff p-3 box-shadow-1 border-radius-15">
             <div className=" d-flex gap-2  m-auto ">
             <div className="d-flex flex-column justify-content-center align-items-center">
