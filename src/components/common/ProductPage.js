@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import StarRatting from "./StarRatting";
 import { ShieldLockFill } from "react-bootstrap-icons";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCartBtn from "./Components/AddCartBtn";
 import Dropdown from "react-bootstrap/Dropdown";
 import Moment from "react-moment";
@@ -14,10 +14,12 @@ import Slider from "react-slick";
 import Button1 from "./Components/Button1";
 
 const ProductPage = () => {
+  const navigate= useNavigate()
   const { productId } = useParams();
   const [items, setItems] = useState({});
   const [slickItems, setSlickItems] = useState([]);
   const [category, setCategory] = useState("");
+  const [user,setUser] = useState("")
   const [selectSize, setSelectSize] = useState("Select");
   const [selectQuantity, setSelectQuantity] = useState("1");
   const quantity = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -59,6 +61,28 @@ const ProductPage = () => {
     ],
   };
 
+  const getUser = async () => {
+    const userToken = await JSON.parse(localStorage.getItem("user"));
+    const header = {
+      "auth-token": userToken,
+    };
+    if (localStorage.getItem("user")) {
+      await axios
+        .post(`http://localhost:8080/api/user/getuser`, null, {
+          headers: header,
+        })
+        .then((response) => {
+          console.log(response.data._id);
+          setUser(response.data._id);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      console.log("please login first");
+    }
+  };
+
   const getData = async (productId) => {
     if (productId) {
       const api = `http://localhost:8080/api/product/${productId}`;
@@ -95,14 +119,22 @@ const ProductPage = () => {
   useEffect(() => {
     getData(productId);
     slickData();
+    getUser()
   }, [category]);
 
-  const addToCart = () => {
+  const addToCart =async () => {
     const cartItem = {
-      id: items._id,
+      userId:user,
+      productId: items._id,
       quantity: items.quantity,
       size: items.size,
     };
+    if(user){
+      await axios.post('http://localhost:8080/api/cart/add',cartItem)
+    }else{
+      navigate("/singup&login")
+    }
+   
     console.log(cartItem);
   };
 
@@ -258,7 +290,7 @@ const ProductPage = () => {
             </div>
 
             <div className="d-flex w-100 position-sticky bottom-0 bg-fff">
-              <Button1>Add To Cart</Button1>
+              <Button1 onClick={addToCart}>Add To Cart</Button1>
               {/* <AddCartBtn className={"p-4 rounded-0 rounded-end w-100"} /> */}
               <Button1>Buy Now</Button1>
             </div>

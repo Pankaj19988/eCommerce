@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button, Dropdown } from "react-bootstrap";
 import StarRatting from "./StarRatting";
@@ -6,6 +6,11 @@ import StarRatting from "./StarRatting";
 const YourOrder = () => {
   const [selectQuantity, setSelectQuantity] = useState("1");
   const quantity = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+  
+  useEffect(() => {
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+  }, []);
   return (
     <div className="p-3 d-flex align-items-center flex-column gap-3 bg-fff">
       {quantity.map((item,i)=>(

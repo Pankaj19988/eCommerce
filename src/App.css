@@ -210,6 +210,9 @@ input {
 .w-max-cont {
   width: max-content;
 }
+.w-fit-cont{
+  width: fit-content !important;
+}
 
 .w-webkit{
   width: -webkit-fill-available !important;
