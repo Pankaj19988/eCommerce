@@ -64,6 +64,7 @@ const OtpSingUp = (props) => {
         console.log(response);
         props.setSignUpModel(false)
         props.setSingUpThim(false)
+        props.setSingUpData({})
       })
       .catch( (error)=> {
         console.log(error.response.data);
@@ -108,7 +109,7 @@ const OtpSingUp = (props) => {
           }}
         />
       </div>
-      <Button onClick={singUp}>Sing up</Button>
+      <Button type="submite" onClick={singUp}>Sing up</Button>
     </div>
   );
 };

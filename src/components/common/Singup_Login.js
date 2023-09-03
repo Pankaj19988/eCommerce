@@ -287,12 +287,11 @@ const Singup_Login = () => {
                   <p className="fw-600 mb-0 text-danger">
                     {invalidMobile}
                   </p>
-                <input
-                  type="button"
-                  value={!forgetPass ? "Sing In" : "Get OTP"}
+                <button
+                  type="submite"
                   className="btn-singin solid"
                   onClick={!forgetPass ? submiteSingIn : getOtp}
-                />
+                >{!forgetPass ? "Sing In" : "Get OTP"}</button>
 
                 <ModelCenter
                   show={otpModel}

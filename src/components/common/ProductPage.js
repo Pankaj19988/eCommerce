@@ -152,7 +152,7 @@ const ProductPage = () => {
             <hr className="mb-0" />
             <div className="mb-3 d-flex align-items-center gap-3">
               <StarRatting
-                size={20}
+                size={16}
                 startCount={items.totleRatting}
                 star={items.star}
               />
@@ -289,7 +289,7 @@ const ProductPage = () => {
               <hr />
             </div>
 
-            <div className="d-flex w-100 position-sticky bottom-0 bg-fff">
+            <div className="d-flex w-100 position-sticky bottom-0 bg-fff gap-2">
               <Button1 onClick={addToCart}>Add To Cart</Button1>
               {/* <AddCartBtn className={"p-4 rounded-0 rounded-end w-100"} /> */}
               <Button1>Buy Now</Button1>

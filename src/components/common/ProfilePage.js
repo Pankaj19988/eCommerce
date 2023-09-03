@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Input from "./Components/Input";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 const ProfilePage = () => {
+  const navigate = useNavigate()
 
   const [user,setUser] = useState({})
   const getUser = async () => {
@@ -21,6 +23,7 @@ const ProfilePage = () => {
           console.log(error);
         });
     } else {
+      navigate('/singup&login')   
       console.log("please login first");
     }
   };

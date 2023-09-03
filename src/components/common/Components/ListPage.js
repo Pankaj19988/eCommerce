@@ -117,12 +117,12 @@ const ListPage = (props) => {
   //   console.log(i)
   // }
   return (
-    <div className="bg-color-fff bg-fff gap-2 p-2 justify-content-center grid5 media-w-100 media-grid-2-47-47 w-90-noimpo mx-auto">
+    <div className="bg-color-fff bg-fff gap-2 padding-2 justify-content-center grid5 media-w-100 media-grid-2-47-47 w-90-noimpo mx-auto  smal-screen-py-3">
       {allItems &&
         allItems.map((item, i) => (
           <div
             key={i}
-            className="bg-fff box-shadow-1 hover-shadow-10 p-2 w-20 border-radius-5 d-flex flex-column justify-content-between align-items-start"
+            className="bg-fff box-shadow-1 hover-shadow-10 p-2 w-20 border-radius-5 d-flex flex-column justify-content-between align-items-start smal-screen-border-radiuse-0px"
           >
             <Link
               to={`/product/${item._id}`}

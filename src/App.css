@@ -1,7 +1,7 @@
 /* @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap"); */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
 
 .nav-icon {
   width: 20px !important;
@@ -9,7 +9,7 @@
 }
 
 body {
-  font-family: 'Montserrat', sans-serif !important;
+  font-family: "Montserrat", sans-serif !important;
   /* font-family: Inter var, ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
@@ -58,7 +58,12 @@ input {
 }
 
 /* Padding-- */
-
+.padding-2{
+  padding: 0.5rem;
+}
+.padding-3{
+  padding: 1rem;
+}
 .plr-1-5rem {
   padding: 0rem 1.5rem;
 }
@@ -111,7 +116,7 @@ input {
   height: 150px;
 }
 
-.h-200-noimpo{
+.h-200-noimpo {
   height: 200px;
 }
 .h-200 {
@@ -146,6 +151,9 @@ input {
   max-height: 530px;
 }
 
+.cour-height{
+  height: 600px;
+}
 /* width-- */
 
 .w-50-noimp {
@@ -210,11 +218,11 @@ input {
 .w-max-cont {
   width: max-content;
 }
-.w-fit-cont{
+.w-fit-cont {
   width: fit-content !important;
 }
 
-.w-webkit{
+.w-webkit {
   width: -webkit-fill-available !important;
 }
 
@@ -454,6 +462,10 @@ input {
   font-size: 14px !important;
 }
 
+.f-star-16{
+  font-size: 16px;
+}
+
 .f-15 {
   font-size: 15px !important;
 }
@@ -486,6 +498,10 @@ input {
 
 .line-14 {
   line-height: 14px;
+}
+
+.line-star-16{
+  line-height: 16px;
 }
 
 .line-18 {
@@ -548,7 +564,7 @@ input {
 
 /* transision */
 
-.translate-y--50{
+.translate-y--50 {
   transform: translatey(-50%);
 }
 /* top-- */
@@ -624,6 +640,36 @@ input {
         order: 1;
     }
 } */
+@media only screen and (max-width: 380px) {
+  .smal-screen-f-10 {
+    font-size: 10px !important;
+    line-height: 10px !important;
+  }
+  .smal-screen-f-12 {
+    font-size: 12px !important;
+    line-height: 12px !important;
+  }
+  .smal-screen-w-45 {
+    width: 45px !important;
+  }
+  .smal-screen-h-45 {
+    height: 45px !important;
+  }
+  .smal-screen-p-t-b-l-0 {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    padding-left: 0px !important;
+  }
+  .smal-screen-py-3 {
+    padding: 1rem 0rem !important;
+  }
+  .smal-screen-border-radiuse-0px {
+    border-radius: 0px !important;
+  }
+  .cour-height{
+    height: 350px;
+  }
+}
 
 @media only screen and (max-width: 1024px) {
   .grid4 {
@@ -963,7 +1009,6 @@ input {
 }
 
 /* //////////////////////////////////////////// */
-
 
 .ellipsis {
   text-overflow: ellipsis;

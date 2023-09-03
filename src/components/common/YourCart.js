@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Dropdown, InputGroup } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 import StarRatting from "./StarRatting";
 import ModelCenter from "./Components/ModelCenter";
 import AddressFill from "./AddressFill";
 import Button1 from "./Components/Button1";
 import axios from "axios";
 import Form from "react-bootstrap/Form";
+import Moment from "react-moment";
+import moment from "moment";
 
 const YourCart = () => {
-  const [selectQuantity, setSelectQuantity] = useState("1");
-  // const [quantity, setQuantity] = useState([]);
+  const navigate = useNavigate()
+  const addtime = moment().add(+15, "days")
   const quantity = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const size = ["S", "M", "L", "XL", "XXL", "XXXL"];
   const [adressModalShow, setAdressModalShow] = useState(false);
@@ -37,6 +39,7 @@ const YourCart = () => {
           console.log(error);
         });
     } else {
+      navigate("/singup&login")
       console.log("please login first");
     }
   };
@@ -86,8 +89,23 @@ const YourCart = () => {
     console.log(user);
   };
 
-  const updateSize = async () => {};
+  const updateSize = async (e) => {
+    await axios
+      .put("http://localhost:8080/api/cart/update", {
+        size: e.target.value,
+        cartobjectid: e.target.id,
+        userid: user,
+      })
+      .then((response) => {
+        console.log(response);
+        getCartData();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
+  
   useEffect(() => {
     getUser();
     getCartData();
@@ -123,15 +141,15 @@ const YourCart = () => {
     document.documentElement.scrollTop = 0;
   }, []);
   return (
-    <div className="display-flex gap-3 p-3 m-auto bg-fff justify-content-center">
+    <div className="display-flex gap-3 padding-3 m-auto bg-fff justify-content-center smal-screen-py-3">
       <div className=" d-flex flex-column gap-3 media-mb-1rem ">
         {cartProduct?.map((item, i) => (
-          <div key={i} className="bg-fff p-3 box-shadow-1 border-radius-15">
+          <div key={i} className="bg-fff  box-shadow-1 border-radius-15 p-3 smal-screen-border-radiuse-0px">
             <div className=" d-flex gap-2 justify-content-between m-auto ">
               <div className="d-flex gap-2">
-                <div className="d-flex flex-column justify-content-center align-items-center">
+                <div className="d-flex flex-column justify-content-center align-items-center smal-screen-w-45">
                   <img
-                    className="h-110 media-w-90px media-h-90px object-fit-contain"
+                    className="h-110 media-h-90px object-fit-contain smal-screen-w-45"
                     src={item.product.image}
                   />
                   <p className="text-center m-0 w-100 bg-ofwhite">
@@ -139,7 +157,7 @@ const YourCart = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="trunket-1-line m-0 f-14 fw-600 line-14">
+                  <p className="trunket-1-line m-0 f-14 fw-600 line-14 smal-screen-f-12">
                     {item.product.title}
                   </p>
                   <StarRatting
@@ -152,49 +170,51 @@ const YourCart = () => {
                     <table>
                       <tbody>
                         <tr>
-                          <td className="fw-900 f-14 px-2">M.R.P</td>
+                          <td className="fw-900 f-14 px-2 smal-screen-f-10">M.R.P</td>
                           <td className="f-14 text-decoration-line-through">
                             :₹{item.product.mrp * item.quantity}
                           </td>
                         </tr>
                         <tr>
-                          <td className="fw-900 f-12 px-2">Quentity</td>
-                          <td className="f-12">:{item.quantity}</td>
+                          <td className="fw-900 f-12 px-2 smal-screen-f-10">Quentity</td>
+                          <td>
+                            
+                            <Form.Select
+                              size="sm"
+                              className="f-12 w-fit-cont w-100 smal-screen-p-t-b-l-0 "
+                              id={item._id}
+                              value={item.quantity}
+                              onChange={updateQuantity}
+                            >
+                              {quantity?.map((quantity, i) => (
+                                <option
+                                  value={quantity}
+                                  className="text-center"
+                                >
+                                  {quantity}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </td>
                         </tr>
                         <tr>
-                          <td className="fw-900 f-12 px-2">Size</td>
-                          <td className="f-12">:{item.size}</td>
-                        </tr>
-                       <tr>
-                        <td >
-                          <Form.Select
-                            size="sm"
-                            className="f-12 w-fit-cont w-100"
-                            id={item._id}
-                            onChange={updateQuantity}
-                          >
-                            {quantity?.map((quantity, i) => (
-                              <option value={quantity} className="text-center">
-                                {quantity}
-                              </option>
-                            ))}
-                          </Form.Select>
-                          </td>
+                          <td className="fw-900 f-12 px-2 smal-screen-f-10">Size</td>
                           <td>
-                          <Form.Select
-                            size="sm"
-                            className="f-12 w-fit-cont"
-                            id={item._id}
-                            onChange={updateSize}
-                          >
-                            {size?.map((size, i) => (
-                              <option value={size} className="text-center">
-                                {size}
-                              </option>
-                            ))}
-                          </Form.Select>
+                            <Form.Select
+                              size="sm"
+                              className="f-12 w-fit-cont smal-screen-p-t-b-l-0"
+                              id={item._id}
+                              value={item.size}
+                              onChange={updateSize}
+                            >
+                              {size?.map((size, i) => (
+                                <option value={size} className="text-center">
+                                  {size}
+                                </option>
+                              ))}
+                            </Form.Select>
                           </td>
-                          </tr>
+                        </tr>
                       </tbody>
                     </table>
                   </div>
@@ -202,43 +222,19 @@ const YourCart = () => {
               </div>
               <div className="d-flex flex-column justify-content-between align-items-center">
                 <div className="d-flex gap-3 align-items-center height-fit-content">
-                  {/* <Dropdown>
-                    <Dropdown.Toggle
-                      variant="outline-secondary"
-                      id="dropdown-basic"
-                      className="w-55px media-w-45 f-12 p-0"
-                    >
-                      {selectQuantity}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu className="w-55px">
-                      {quantity.map((item, i) => (
-                        <Dropdown.Item
-                          key={i}
-                          className="f-12"
-                          variant="outline-secondary"
-                          onClick={() => {
-                            setSelectQuantity(item);
-                          }}
-                        >
-                          {item}
-                        </Dropdown.Item>
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown> */}
-
                   <Link onClick={() => deleteCartItem(item._id)}>
                     <i className="fas color-darkpink fa-xmark"></i>
                   </Link>
                 </div>
-                <div className="fw-900 f-12 d-flex flex-column align-items-center color-darkpink ">
+                <div className="fw-900 f-12 d-flex flex-column align-items-center color-darkpink w-max-cont smal-screen-f-10">
                   <p className="m-0">Pay Amount</p>
                   <p className="m-0">₹{item.quantity * item.product.price}</p>
                 </div>
               </div>
             </div>
             <hr className="my-2" />
-            <p className="m-0 fw-600 f-14">
-              Expected Delivery Date : 26/08/2023
+            <p className="m-0 fw-600 f-14 smal-screen-f-10">
+              Expected Delivery Date : <Moment date={addtime} className="fw-900" format="Do MM" />
             </p>
             <hr className="mb-0 mt-2" />
           </div>

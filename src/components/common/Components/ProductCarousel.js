@@ -16,13 +16,13 @@ const ProductCarousel = ({images}) => {
       <Carousel
         slide={false}
         activeIndex={index}
-        className="m-auto h-625 w-450 media-w-100 media-h-450 d-flex align-items-center"
+        className="m-auto w-450 media-w-100 d-flex align-items-center"
         onSelect={handleSelect}
       >
         {images && images.map((item, i) => (
           <Carousel.Item key={i}>
             <img
-                className=" media-w-100 w-100 object-fit-contain"
+                className=" media-w-100 w-100 object-fit-contain cour-height"
                 src={item}
               />
           </Carousel.Item>
