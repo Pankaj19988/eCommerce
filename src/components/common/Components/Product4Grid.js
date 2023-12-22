@@ -1,12 +1,10 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import LoaderContent from "./LoaderContent";
 
 const Product4Grid = ({items,gridHeading}) => {
-  // const [items,setItems]=useState([""])
-  // const[item,setItem]=useState(props.items)
-  // const item = props.items
-  // const api = props.api
+
   const [newItem,setNewItem] = useState([])
   
 
@@ -18,14 +16,12 @@ const Product4Grid = ({items,gridHeading}) => {
   },[items])
  
 
-  const handelClick = () =>{
-    // navigate("/productList")
-  }
+  
   
   return (
-    <div className="border-1px border-radius-5 box-shadow-1 cursor-pointer h-100 d-flex flex-column justify-content-between" onClick={handelClick}>
+    <div className="border-1px border-radius-5 box-shadow-1 cursor-pointer h-100 d-flex flex-column justify-content-between">
       <h2 className="f-20 fw-600 w-auto">{gridHeading}</h2>
-      <div className="grid-2">
+      {newItem.length===0?<LoaderContent visible={true}/>:<div className="grid-2">
         {
            newItem && newItem.map((item,i)=>(
             <div key={i}>
@@ -38,8 +34,8 @@ const Product4Grid = ({items,gridHeading}) => {
         </div>
            ))
         }
-      </div>
-      <div className="text-decoration-none f-15 cursor-pointer hover-bo-light fw-600 color-darkpink">See More</div>
+      </div>}
+      <div className="text-decoration-none f-15 cursor-pointer hover-bo-light fw-600 color-nav-blue">See More</div>
     </div>
   );
 };

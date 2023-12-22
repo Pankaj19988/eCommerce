@@ -29,8 +29,8 @@ const StarRatting = (props) => {
         emptyIcon={<i className="far fa-star"></i>}
         halfIcon={<i className="fa fa-star-half-alt"></i>}
         filledIcon={<i className="fa fa-star"></i>}
-        activeColor="#cc0c39"
-      /><p className={`m-0 f-star-${props.size} line-star-${props.size} color-darkpink`}>{props.startCount}</p>
+        activeColor="#388e3c"
+      /><p className={`m-0 f-star-${props.size} line-star-${props.size}`} style={{color:'#388e3c'}}>{props.startCount}</p>
     </div>:""}
     </div>
   );

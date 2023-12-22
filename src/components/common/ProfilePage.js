@@ -2,110 +2,216 @@ import React, { useEffect, useState } from "react";
 import Input from "./Components/Input";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { getCartData, getOrderData, getUser, userLocationData } from "./service/api";
+import Button1 from "./Components/Button1";
+import logo from "../../nav-logo.png"
 
 const ProfilePage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const [user,setUser] = useState({})
-  const getUser = async () => {
-    const userToken = await JSON.parse(localStorage.getItem("user"));
-   const  header = { 
-      'auth-token': userToken
-    }
-    if (localStorage.getItem("user")) {
-      await axios
-        .post(`http://localhost:8080/api/user/getuser`,null,{headers:header})
-        .then((response) => {
-          console.log(response.data);
-          setUser(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      navigate('/singup&login')   
-      console.log("please login first");
-    }
-  };
+  const [user, setUser] = useState({
+    email: "",
+    fullname: "",
+    mobile: "",
+  });
+  const [userIpData,setUserIpData] = useState({
+    city: "",
+    state: "",
+    country: "",
+    callingcode: ""
+  })
+  const [orderDetail,setOrderDetail] = useState({
+    totleOrder:"",
+    totleAmount:""
+  })
+  const [zipCode,setZipCode] = useState("")
+  const [cart,setCart] = useState(0)
 
   useEffect(() => {
-    getUser();
+    const getUserData = async () => {
+      if (localStorage.getItem("user")) {
+        try {
+          const res = await getUser();
+          if (res.status === 200) {
+            const userData = res.data;
+            setUser({...user,
+              email: userData.email,
+              fullname: userData.fullname,
+              mobile: userData.mobile,
+            });
+            
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        navigate("/singup&login");
+      }
+    };
+
+    const getLocationData = async () => {
+      try {
+        const res = await userLocationData();
+        if (res.status === 200) {
+          const ipData = res.data;
+          setUserIpData({
+            city: ipData.city,
+            state: ipData.region,
+            country: ipData.country_name,
+            callingcode: ipData.country_calling_code,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getAddres = async() =>{
+      if (localStorage.getItem("zipcode")) {
+        const add = JSON.parse(localStorage.getItem("zipcode"))
+        setZipCode(add)
+      }
+      
+    }
+    const getCart = async() =>{
+      try {
+        const res = await getCartData()
+        if(res.status===200){
+          setCart(res.data.cartitem?.length)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    const getOrder = async () =>{
+      try {
+        const res = await getOrderData()
+        if (res.status===200) {
+          const data = res.data.orders
+          const amount = data?.map((order,i)=>{
+            return order.amount
+          })?.reduce((sum,item)=>sum+item,0)
+          const length = data?.length
+          setOrderDetail({totleOrder:length,
+          totleAmount:amount})
+        }
+        console.log(res.data.orders)
+      } catch (error) {
+        
+      }
+    }
+    getCart()
+    getOrder()
+    getUserData();
+    getLocationData();
+    getAddres();
   }, []);
 
   return (
     <div className="bg-fff">
-      <div className="w-100 bg-category color-fff f-100 text-center media-f-50 py-4rem">
-        Queen Shopy
-      </div>
-      <div className="m-auto max-w-720px w-100 ">
-        <div className="w-90-noimpo bg-fff  d-flex flex-column align-items-center border-radius-15 box-shadow-1 px-3 pb-3 mx-auto mt--125px media-mt--70">
-          {/* <div className="h-100 translate-y--50">
-            <img
-              className="h-200 w-200px object-fit-contain border-radius-50  bg-fff  under-Line-05 media-h-90px media-w-90px"
-              src="https://m.media-amazon.com/images/I/71rXy+I4sWL._UL1500_.jpg"
-            />
-            
-          </div> */}
-          <p className="mb-0 text-center fw-900 mt-3">Hellow...{user.fullname}</p>
+      {/* <div className="w-100 bg-category color-fff f-100 text-center media-f-50 ">
+        <img src={logo}/>
+      </div> */}
+      <div className="m-auto max-w-720px w-100 my-3">
+        <div className="w-90-noimpo bg-fff d-flex flex-column align-items-center border-radius-15 box-shadow-1 p-3 p-3 mx-auto">
+          {/* <p className="mb-0 text-center fw-900 mt-3">Hellow...{user.fullname}</p> */}
           {/* mt--100px media-mt--45px */}
-          <hr className="w-100 color-blue " />
-          <div className="d-flex justify-content-around w-100">
+          {/* <hr className="w-100 color-blue " /> */}
+          <div className="d-flex justify-content-around w-100 mb-3">
             <div>
-              <p className="mb-0 text-center fw-900">5</p>
+              <p className="mb-0 text-center fw-900">{orderDetail.totleOrder?orderDetail.totleOrder:"0"}</p>
               <p className="mb-0 text-center fw-600">Your Order</p>
             </div>
             <div className="w-025 bg-blue"></div>
             <div>
-              <p className="mb-0 text-center fw-900">2</p>
+              <p className="mb-0 text-center fw-900">{cart?cart:"0"}</p>
               <p className="mb-0 text-center fw-600">Your Cart</p>
             </div>
             <div className="w-025 bg-blue"></div>
             <div>
-              <p className="mb-0 text-center fw-900">₹299</p>
+              <p className="mb-0 text-center fw-900">₹{orderDetail.totleAmount?orderDetail.totleAmount:"0"}</p>
               <p className="mb-0 text-center fw-600">Totle Pay</p>
             </div>
           </div>
-          <hr className="w-100 color-blue" />
+          {/* <hr className="w-100 color-blue" /> */}
 
           <div className="d-flex flex-column gap-3 w-100">
-          <div className="w-100 d-flex flex-column align-items-start">
-            <p className="mb-0  color-blue fw-900 px-2">mobile</p>
-            <Input type={"number"} disabled={true} placeholder={user.mobile}/>
-          </div>
-          <div className="w-100 d-flex flex-column align-items-start">
-            <p className="mb-0  color-blue fw-900 px-2">E-Mail</p>           
-            <Input type={"email"} disabled={true} placeholder={user.email}/>
-          </div>
-          <div className="w-100 d-flex flex-column align-items-start gap-3">
-            <div className="w-100">
-            <p className="mb-0  color-blue fw-900 px-2">Adress-1</p>
-            <Input type={"text"} disabled={true} placeholder={"A-143,shyam soci."}/>
+            <div className="w-100 d-flex flex-column align-items-start">
+              <p className="mb-0  color-blue fw-900 px-2">Your Name:</p>
+              <Input
+                type={"text"}
+                disabled={true}
+                placeholder={user.fullname}
+              />
             </div>
-            <div className="w-100">
-            <p className="mb-0  color-blue fw-900 px-2">Land Mark</p>
-            <Input type={"text"} disabled={true} placeholder={"katargam"}/>
+            <div className="w-100 d-flex flex-column align-items-start">
+              <p className="mb-0  color-blue fw-900 px-2">Mobile No:</p>
+              <Input
+                type={"number"}
+                disabled={true}
+                placeholder={`${userIpData.callingcode} ${user.mobile}`}
+              />
             </div>
-            <div className="w-100 d-flex gap-3">
+            <div className="w-100 d-flex flex-column align-items-start">
+              <p className="mb-0  color-blue fw-900 px-2">E-Mail:</p>
+              <Input type={"email"} disabled={true} placeholder={user.email} />
+            </div>
+            <div className="w-100 d-flex flex-column align-items-start gap-3">
+              {/* <div className="w-100">
+                <p className="mb-0  color-blue fw-900 px-2">Adress-1:</p>
+                <Input
+                  type={"text"}
+                  placeholder={""}
+                  value={addres.address1}
+                  onChange={(e)=>{
+                    setAddres({...addres,address1:e.target.value})
+                  }}
+                />
+              </div> */}
+              {/* <div className="w-100">
+                <p className="mb-0  color-blue fw-900 px-2">Land Mark:</p>
+                <Input type={"text"}  placeholder={""} value={addres.landmark} onChange={(e)=>{
+                  setAddres({...addres,landmark:e.target.value})
+                }} />
+              </div> */}
+              <div className="w-100 d-flex gap-3">
+                <div className="w-100">
+                  <p className="mb-0  color-blue fw-900 px-2">City:</p>
+                  <Input disabled={true} type={"text"} placeholder={userIpData.city} />
+                </div>
+                <div className="w-100">
+                  <p className="mb-0  color-blue fw-900 px-2">ZipCode:</p>
+                  <Input  type={"number"} placeholder="One Time Enter 6 Digite ZipCode" disabled={localStorage.getItem("zipcode")} value={zipCode} onChange={(e)=>{
+                    const value =  e.target.value.substring(0, 6)
+                    setZipCode(value)
+                  }}/>
+                </div>
+              </div>
+              <div className="w-100 d-flex gap-3">
+                <div className="w-50">
+                  <p className="mb-0  color-blue fw-900 px-2">State:</p>
+                  <Input
+                    disabled={true}
+                    type={"text"}
+                    placeholder={userIpData.state}
+                  />
+                </div>
+                <div className="w-50">
+                  <p className="mb-0  color-blue fw-900 px-2">Country:</p>
+                  <Input disabled={true} type={"text"} placeholder={userIpData.country} />
+                </div>
+              </div>
+              {localStorage.getItem("zipcode")?"":
               <div className="w-100">
-                <p className="mb-0  color-blue fw-900 px-2">City</p>
-                <Input disabled={true} type={"text"} placeholder={"Surat"}/>
-              </div>
-              <div className="w-100">
-                <p className="mb-0  color-blue fw-900 px-2">ZipCode</p>
-                <Input disabled={true} type={"number"} placeholder={395004}/>
-              </div>
+                <Button1 onClick={()=>{
+                  if (zipCode.length===6) {
+                    localStorage.setItem("zipcode",JSON.stringify(zipCode))
+                    window.location.reload(true)
+                  }
+                }}>{zipCode.length===6?<span>Submite ZipCode</span>:<span className="text-danger">Submite Valid ZipCode</span>}</Button1>
+              </div>}
             </div>
-            <div className="w-100 d-flex gap-3">
-              <div className="w-50">
-                <p className="mb-0  color-blue fw-900 px-2">State</p>
-                <Input disabled={true} type={"text"} placeholder={"Gujarat"}/>
-              </div>
-              <div className="w-50">
-                <p className="mb-0  color-blue fw-900 px-2">Country</p>              
-                <Input disabled={true} type={"text"} placeholder={"India"}/>
-              </div>
-            </div>
-          </div>
           </div>
         </div>
       </div>

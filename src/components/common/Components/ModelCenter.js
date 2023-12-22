@@ -10,6 +10,7 @@ const ModelCenter = (props) => {
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
+      backdrop={props.backdrop}
     >
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter" className="w-100 d-flex justify-content-between">

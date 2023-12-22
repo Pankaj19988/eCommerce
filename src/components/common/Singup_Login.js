@@ -6,6 +6,20 @@ import GetOtp from "./Components/GetOtp";
 import { Form } from "react-bootstrap";
 import OtpSingUp from "./Components/OtpSingUp";
 import axios from "axios";
+import {
+  forgotPassGetOtp,
+  setNewPassword,
+  submiteSingIn,
+  submiteSingInForm,
+  singUpUserSendOtp,
+  sendSingUpOTP,
+  submiteSingUpForm,
+} from "./service/api";
+import singUpPng from "../../singUpPng.png";
+import singInPng from "../../singInPng.png";
+import moment from "moment";
+
+
 
 const Singup_Login = () => {
   const [singUpThim, setSingUpThim] = useState(false);
@@ -17,10 +31,9 @@ const Singup_Login = () => {
     fullname: "",
     email: "",
     mobile: "",
-    password: " ",
+    password: "",
     term_condition: false,
   });
-  
 
   // Model Show //
   const [otpModel, setOtpModel] = useState(false);
@@ -31,150 +44,125 @@ const Singup_Login = () => {
   const [invalidMobile, setInvalidMobile] = useState("");
   const [findErr, setFindErr] = useState("");
   const [blanckInput, setBlanckInput] = useState([]);
-  const [diffrantPass,setDiffrantPass] = useState('')
-
+  const [diffrantPass, setDiffrantPass] = useState("");
   const [passShow, setPassShow] = useState(false);
-
-  const [profile, setProfile] = useState([]);
   const [mobileNumber, setMobileNumber] = useState("");
   const [singInPass, setSingInPass] = useState("");
-  const [mactchedItem, setMactchedItem] = useState();
   const [otpSuccess, setOtpSuccess] = useState(false);
   const [newPass1, setNewPass1] = useState("");
   const [newPass2, setNewPass2] = useState("");
-
-
-  useEffect(()=>{
-    if(localStorage.getItem('user')){
-      navigate('/')
-    }
-  },[])
+  const [secretKey,setSecretKey] = useState("")
   const singIn = () => {
     if (singUpThim) {
       setSingUpThim(false);
     }
   };
 
-  const getDataUserData = async () => {
-    // const url = "http://localhost:3000/profile";
-    // const data = await fetch(url);
-    // const parsedData = await data.json();
-    // console.log(parsedData);
-    // setProfile(parsedData);
-  };
-
-  const submiteSingIn = async () => {
-    // const findProfile = await profile.find(
-    //   (item) => item.mobile == mobileNumber && item.password == singInPass
-    // );
-    // console.log(findProfile);
-    console.log(mobileNumber)
-    console.log(singInPass)
-    await axios.post("http://localhost:8080/api/user/singin",({mobile:mobileNumber,password:singInPass}))
-    .then((response)=>{
-      console.log(response.data)
-      localStorage.setItem('user',JSON.stringify(response.data))
-      navigate('/')
-    })
-    .catch((errors)=>{
-      if(errors.response.status===400){
-        setInvalidMobile(errors.response.data);
-        setSingInPass('')
-        console.log(errors.response.data)
-      }else if(errors.response.status===404){
-        console.log(errors)
-      }else{
-        console.log("sing in successfull")
+  const submiteSingIn = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await submiteSingInForm(mobileNumber, singInPass);
+      if (res.status === 200) {
+        navigate("/");
+        window.location.reload();
       }
-    })
-    // if (findProfile) {
-    //   console.log("i am Sing In");
-    // } else {
-    //   console.log("Not Mached");
-    // }
+    } catch (error) {
+      if (error.response.status === 400) {
+        setInvalidMobile(error.response.data);
+        setSingInPass("");
+      } else if (error.response.status === 404) {
+        console.log(error);
+      }
+    }
   };
 
-  
 
   const submiteSingUp = async (e) => {
     e.preventDefault();
-    console.log(singUpForm);
-    await axios
-      .post("http://localhost:8080/api/user/find", singUpForm)
-      .then((response) => {
-        console.log(response);
-        setFindErr('')
+    try {
+      const res = await singUpUserSendOtp(singUpForm);
+      // await submiteSingUpForm(singUpForm)
+      if (res.status === 200) {
+        setSecretKey(res.data)
         setSignUpModel(true);
-      })
-      .catch((error) => {
-        const findingErr =error.response.data
-        const fillError =error.response.data.errors
-        if (error.response.status===403) {
-          setFindErr(findingErr);
-          setBlanckInput([]);
-        }else if (error.response.status===400) {
-          const blanckErrPath = fillError.map((item, i) => {
-            return item.path;
-          });
-          setBlanckInput(blanckErrPath);
-        }
-      });
+        console.log(res)
+      }
+    } catch (error) {
+      console.log(error);
+      const findingErr = error.response.data;
+      const fillError = error.response.data.errors;
+      if (error.response.status === 403) {
+        setFindErr(findingErr);
+        setBlanckInput([]);
+      } else if (error.response.status === 400) {
+        const blanckErrPath = fillError?.map((item, i) => {
+          return item.path;
+        });
+        setBlanckInput(blanckErrPath);
+      }
+    }
+   
+    // setSignUpModel(true);
   };
 
-  useEffect(() => {
-    getDataUserData();
-  }, []);
 
-  const getOtp = async() => {
-    await axios.post("http://localhost:8080/api/user/forgotpassword",({mobile:mobileNumber}))
-    .then((response)=>{
-      console.log(response)
-      setMactchedItem(response.data._id)
-      setOtpModel(true);
-      setInvalidMobile("")
-    }).catch((errors)=>{
-        console.log(errors.response.data)
-        setInvalidMobile(errors.response.data)
-    })
-    // const findProfile = profile.find((item) => item.mobile == mobileNumber);
-    // setOtpModel(!!findProfile);
-    // if (findProfile) {
-    //   setMactchedItem(findProfile);
-    //   setInvalidMobile(false);
-    // } else {
-    //   setInvalidMobile(true);
-    //   console.log("Invlid Number");
-    // }
+  
+
+  const getOtp = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await forgotPassGetOtp(mobileNumber);
+      if (res.status === 200) {
+        setSecretKey(res.data);
+        setOtpModel(true);
+        setInvalidMobile("");
+      }
+    } catch (error) {
+      setInvalidMobile(error.response.data);
+    }
   };
 
-  const setPassword = async() => {
+  const setPassword = async () => {
     if (newPass1 === newPass2) {
-      let forgotId = mactchedItem;
-      console.log(newPass2)
-      await axios.put(`http://localhost:8080/api/user/setpassword/${forgotId}`,({password:newPass2}))
-      .then((response)=>{
-        getDataUserData();
-      setNewPass1("");
-      setNewPass2("");
-      setOtpSuccess(false);
-      setForgetPass(false);
-      }).catch((errors)=>{
-        console.log(errors.response.data)
-        setDiffrantPass(errors.response.data)
-      })
-    }else {
-       setDiffrantPass("Please Enter Sem Password")
-     }
+      try {
+        const res = await setNewPassword(secretKey, newPass2);
+        if (res.status === 200) {
+          setNewPass1("");
+          setNewPass2("");
+          setOtpSuccess(false);
+          setForgetPass(false);
+        }
+      } catch (error) {
+        setDiffrantPass(error.response.data);
+      }
+    } else {
+      setDiffrantPass("Please Enter Sem Password");
+    }
   };
 
   const handleInput = (e) => {
     const name = e.target.name;
     const value = e.target.value;
-    setSingUpForm({
-      ...singUpForm,
-      [name]: value,
-    });
+    if (name === "mobile") {
+      setSingUpForm({
+        ...singUpForm,
+        [name]: value.substring(0, 10),
+      });
+      const removeError = blanckInput?.filter((item) => item != name);
+      setBlanckInput([...removeError]);
+      setFindErr("");
+    } else {
+      setSingUpForm({
+        ...singUpForm,
+        [name]: value,
+      });
+      const removeError = blanckInput?.filter((item) => item != name);
+      setBlanckInput([...removeError]);
+      setFindErr("");
+    }
   };
+
+  
 
   return (
     <div>
@@ -186,7 +174,9 @@ const Singup_Login = () => {
 
               <form className="z-2">
                 <h2 className="title">Enter New Password</h2>
-                <div className={`input-field ${diffrantPass?'err-border':""}`}>
+                <div
+                  className={`input-field mb-2 ${diffrantPass ? "err-border" : ""}`}
+                >
                   <i className="fas fa-lock"></i>
                   <input
                     type={passShow ? "text" : "password"}
@@ -207,7 +197,9 @@ const Singup_Login = () => {
                     )}
                   </Link>
                 </div>
-                <div className={`input-field  ${diffrantPass?'err-border':""}`}>
+                <div
+                  className={`input-field  ${diffrantPass ? "err-border" : ""}`}
+                >
                   <i className="fas fa-lock"></i>
                   <input
                     type="password"
@@ -223,9 +215,7 @@ const Singup_Login = () => {
                 ) : (
                   ""
                 )} */}
-                <p className="fw-600 mb-0 text-danger">
-                    {diffrantPass}
-                  </p>
+                <p className="fw-600 mb-0 text-danger">{diffrantPass}</p>
                 <input
                   type="button"
                   value={"Set Password"}
@@ -240,17 +230,29 @@ const Singup_Login = () => {
                 <h2 className="title">
                   {!forgetPass ? "Sing In" : "Please Enter Number"}
                 </h2>
-                <div className={`input-field ${invalidMobile===''?'':'err-border'}`}>
+                <div className="d-flex flex-column gap-2 w-100 justify-content-center align-items-center">
+                <div
+                  className={`input-field ${
+                    invalidMobile === "" ? "" : "err-border"
+                  }`}
+                >
                   <i className="fas fa-phone"></i>
                   <input
                     type="number"
                     placeholder="Phone Number"
                     value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value.slice(0, 10))}
+                    onChange={(e) => {
+                      setMobileNumber(e.target.value.slice(0, 10));
+                      setInvalidMobile("");
+                    }}
                   />
                 </div>
                 {!forgetPass ? (
-                  <div className={`input-field ${invalidMobile===''?'':'err-border'}`}>
+                  <div
+                    className={`input-field ${
+                      invalidMobile === "" ? "" : "err-border"
+                    }`}
+                  >
                     <i className="fas fa-lock"></i>
                     <input
                       type={passShow ? "text" : "password"}
@@ -274,6 +276,7 @@ const Singup_Login = () => {
                 ) : (
                   ""
                 )}
+                </div>
                 <div className="d-flex justify-content-between">
                   <Link
                     className="m-0 text-decoration-none text-end"
@@ -284,14 +287,14 @@ const Singup_Login = () => {
                     {!forgetPass ? "Forget Password?" : ""}
                   </Link>
                 </div>
-                  <p className="fw-600 mb-0 text-danger">
-                    {invalidMobile}
-                  </p>
+                <p className="fw-600 mb-0 text-danger">{invalidMobile}</p>
                 <button
                   type="submite"
                   className="btn-singin solid"
                   onClick={!forgetPass ? submiteSingIn : getOtp}
-                >{!forgetPass ? "Sing In" : "Get OTP"}</button>
+                >
+                  {!forgetPass ? "Sing In" : "Get OTP"}
+                </button>
 
                 <ModelCenter
                   show={otpModel}
@@ -299,13 +302,15 @@ const Singup_Login = () => {
                   title={"Enter OTP"}
                 >
                   <GetOtp
-                    mactchedItem={mactchedItem}
+                    secretKey={secretKey}
                     setOtpModel={setOtpModel}
                     setOtpSuccess={setOtpSuccess}
+                    mobile = {mobileNumber}
+                    setSecretKey={setSecretKey}
                   />
                 </ModelCenter>
 
-                <p className="social-text">Or Sign in with social platforms</p>
+                {/* <p className="social-text">Or Sign in with social platforms</p>
                 <div className="social-media">
                   <Link href="#" className="social-icon">
                     <i className="fab fa-facebook-f"></i>
@@ -319,7 +324,7 @@ const Singup_Login = () => {
                   <Link href="#" className="social-icon">
                     <i className="fab fa-linkedin-in"></i>
                   </Link>
-                </div>
+                </div> */}
               </form>
             )}
 
@@ -327,57 +332,92 @@ const Singup_Login = () => {
 
             <form action="#" className="sign-up-form">
               <h2 className="title">Sign up</h2>
+              <div className="d-flex flex-column gap-2 w-100 justify-content-center align-items-center">
+              <div className="w-100 ">
               <div
-                className={`input-field ${
-                  blanckInput.includes("fullname") ? "err-border" : ""
+                className={`input-field mx-auto ${
+                  blanckInput?.includes("fullname") ? "err-border" : ""
                 }`}
               >
                 <i className="fas fa-user"></i>
                 <input
                   type="text"
                   name="fullname"
+                  value={singUpForm.fullname}
                   placeholder="Full Name"
                   onChange={handleInput}
                 />
+              
               </div>
-              {blanckInput.includes("fullname")?<div className="mb-0 text-danger w-80-noimpo fw-600">Please Enter Valid Full Name</div>:''}
+              {blanckInput?.includes("fullname") ? (
+                <small className="mb-0 text-danger w-80-noimpo fw-600">
+                  Please Enter Valid Full Name
+                </small>
+              ) : (
+                ""
+              )}
+              </div>
+
+              <div className="w-100 ">
               <div
-                className={`input-field ${
-                  blanckInput.includes("email") ? "err-border" : ""
+                className={`input-field mx-auto ${
+                  blanckInput?.includes("email") ? "err-border" : ""
                 }`}
               >
                 <i className="fas fa-envelope"></i>
                 <input
                   type="email"
                   name="email"
+                  value={singUpForm.email}
                   placeholder="Email"
                   onChange={handleInput}
                 />
               </div>
-              {blanckInput.includes("email")?<div className="mb-0 text-danger w-80-noimpo fw-600">Please Enter Valid Email</div>:''}
+              {blanckInput?.includes("email") ? (
+                <small className="mb-0 text-danger w-80-noimpo fw-600">
+                  Please Enter Valid Email
+                </small>
+              ) : (
+                ""
+              )}
+              </div>
+
+              <div className="w-100">
               <div
-                className={`input-field ${
-                  blanckInput.includes("mobile") ? "err-border" : ""
+                className={`input-field mx-auto ${
+                  blanckInput?.includes("mobile") ? "err-border" : ""
                 }`}
               >
                 <i className="fas fa-phone"></i>
                 <input
                   type="number"
                   name="mobile"
+                  max={10}
+                  value={singUpForm.mobile}
                   placeholder="Mobile Number"
                   onChange={handleInput}
                 />
               </div>
-              {blanckInput.includes("mobile")?<div className="mb-0 text-danger w-80-noimpo fw-600">Please Enter Valid Mobile Number</div>:''}
+              {blanckInput?.includes("mobile") ? (
+                <small className="mb-0 text-danger w-80-noimpo fw-600">
+                  Please Enter Valid Mobile Number
+                </small>
+              ) : (
+                ""
+              )}
+              </div>
+
+              <div className="w-100 ">
               <div
-                className={`input-field ${
-                  blanckInput.includes("password") ? "err-border" : ""
+                className={`input-field mx-auto ${
+                  blanckInput?.includes("password") ? "err-border" : ""
                 }`}
               >
                 <i className="fas fa-lock"></i>
                 <input
                   type={passShow ? "text" : "password"}
                   name="password"
+                  value={singUpForm.password}
                   placeholder="Set-Password"
                   onChange={handleInput}
                   required
@@ -395,7 +435,17 @@ const Singup_Login = () => {
                   )}
                 </Link>
               </div>
-              {blanckInput.includes("password")?<div className="mb-0 text-danger w-80-noimpo fw-600">Password Enter Minimum 5 character</div>:''}
+              {blanckInput?.includes("password") ? (
+                <div className="mb-0 text-danger w-80-noimpo fw-600">
+                  <small>
+                  Password Enter Minimum 5 character
+                  </small>
+                </div>
+              ) : (
+                ""
+              )}
+              </div>
+              </div>
               <div className="mb-0 text-danger fw-600">{findErr}</div>
               <div className="m-0 text-end d-flex align-items-center gap-2 ">
                 <Form.Check
@@ -405,7 +455,9 @@ const Singup_Login = () => {
                       ...singUpForm,
                       term_condition: e.target.checked,
                     });
-                    console.log(e.target.checked);
+                    if (e.target.checked) {
+                      setFindErr('')
+                    }
                   }}
                 />
                 <Link
@@ -426,23 +478,30 @@ const Singup_Login = () => {
                 type="submite"
                 className="btn-singin"
                 onClick={submiteSingUp}
+                disabled={signUpModel}
               >
-                Sign up
+                {signUpModel?<div class="spinner-border text-light" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>:"Sign up"}
+                
               </button>
               <ModelCenter
                 show={signUpModel}
-                onHide={()=>setSignUpModel(false)}
-                title={"SING UP"}
+                onHide={() => setSignUpModel(false)}
+                title={"Verify Your Account"}
+                backdrop="static"
               >
                 <OtpSingUp
-                  singUpData={singUpForm}
+                  singUpForm={singUpForm}
+                  secretKey={secretKey}
                   setSignUpModel={setSignUpModel}
                   setSingUpThim={setSingUpThim}
-                  setSingUpData={setSingUpForm}
-                  getDataUserData={getDataUserData}
+                  setSingUpForm={setSingUpForm}
+                  mobile = {singUpForm.mobile}
+                  setSecretKey={setSecretKey}
                 />
               </ModelCenter>
-              <p className="social-text">Or Sign up with social platforms</p>
+              {/* <p className="social-text">Or Sign up with social platforms</p>
               <div className="social-media">
                 <Link href="#" className="social-icon">
                   <i className="fab fa-facebook-f"></i>
@@ -456,7 +515,7 @@ const Singup_Login = () => {
                 <Link href="#" className="social-icon">
                   <i className="fab fa-linkedin-in"></i>
                 </Link>
-              </div>
+              </div> */}
             </form>
           </div>
         </div>
@@ -478,11 +537,7 @@ const Singup_Login = () => {
                 Sign up
               </button>
             </div>
-            <img
-              src="https://i.ibb.co/6HXL6q1/Privacy-policy-rafiki.png"
-              className="singin-image"
-              alt=""
-            />
+            <img src={singUpPng} className="singin-image" alt="" />
           </div>
           <div className="panel right-panel">
             <div className="content">
@@ -495,11 +550,7 @@ const Singup_Login = () => {
                 Sign in
               </button>
             </div>
-            <img
-              src="https://i.ibb.co/nP8H853/Mobile-login-rafiki.png"
-              className="singin-image"
-              alt=""
-            />
+            <img src={singInPng} className="singin-image" alt="" />
           </div>
         </div>
       </div>

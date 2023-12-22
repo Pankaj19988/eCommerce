@@ -1,27 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import StarRatting from "./StarRatting";
 import { ShieldLockFill } from "react-bootstrap-icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import AddCartBtn from "./Components/AddCartBtn";
 import Dropdown from "react-bootstrap/Dropdown";
 import Moment from "react-moment";
 import moment from "moment";
 import BadgeGreen from "./Components/BadgeGreen";
 import ProductCarousel from "./Components/ProductCarousel";
 import axios from "axios";
-import { Button } from "react-bootstrap";
 import Slider from "react-slick";
 import Button1 from "./Components/Button1";
+import { toast } from "react-toastify";
+import { addToCartOneItem, getAllProduct, getOneProductById } from "./service/api";
+import ModelCenter from "./Components/ModelCenter";
+import AddressFill from "./AddressFill";
+import LoaderContent from "./Components/LoaderContent";
 
-const ProductPage = () => {
-  const navigate= useNavigate()
+const ProductPage = (props) => {
+  const navigate = useNavigate();
+
+  const sliderRef = useRef(null);
+  const [reachedFirstSlide, setReachedFirstSlide] = useState(false);
+
   const { productId } = useParams();
   const [items, setItems] = useState({});
   const [slickItems, setSlickItems] = useState([]);
   const [category, setCategory] = useState("");
-  const [user,setUser] = useState("")
-  const [selectSize, setSelectSize] = useState("Select");
-  const [selectQuantity, setSelectQuantity] = useState("1");
+  const [adressModalShow,setAdressModalShow] = useState(false)
+  const [products,setProducts] = useState([])
+  const [loaderVisible,setLoaderVisible] =useState(false)
   const quantity = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const size = ["S", "M", "L", "XL", "XXL", "XXXL"];
   const addtime = moment().add(+15, "days");
@@ -61,87 +68,96 @@ const ProductPage = () => {
     ],
   };
 
-  const getUser = async () => {
-    const userToken = await JSON.parse(localStorage.getItem("user"));
-    const header = {
-      "auth-token": userToken,
-    };
-    if (localStorage.getItem("user")) {
-      await axios
-        .post(`http://localhost:8080/api/user/getuser`, null, {
-          headers: header,
-        })
-        .then((response) => {
-          console.log(response.data._id);
-          setUser(response.data._id);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      console.log("please login first");
-    }
-  };
-
   const getData = async (productId) => {
+    
     if (productId) {
-      const api = `http://localhost:8080/api/product/${productId}`;
-      await axios
-        .post(api)
-        .then((response) => {
-          const data = response.data;
+      setLoaderVisible(true)
+      try {
+        const res = await getOneProductById(productId)
+        if (res.status===200) {
+          const data = res.data;
           setItems(data);
           setCategory(data.category);
           document.body.scrollTop = 0;
           document.documentElement.scrollTop = 0;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      setLoaderVisible(false)
     }
   };
 
   const slickData = async () => {
-    const api = "http://localhost:8080/api/product/all";
-    await axios
-      .get(api)
-      .then((response) => {
-        const data = response.data;
-        const filterData = data.filter((item)=>item.category===category)
-        console.log(filterData)
-        setSlickItems(filterData.slice(0,12));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      const res = await getAllProduct(1,12,category)
+      if (res.status===200) {
+        const data = res.data
+        setSlickItems(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
     getData(productId);
     slickData();
-    getUser()
   }, [category]);
 
-  const addToCart =async () => {
+  const addToCart = async () => {
     const cartItem = {
-      userId:user,
       productId: items._id,
       quantity: items.quantity,
       size: items.size,
     };
-    if(user){
-      await axios.post('http://localhost:8080/api/cart/add',cartItem)
-    }else{
-      navigate("/singup&login")
-    }
-   
-    console.log(cartItem);
+    if (localStorage.getItem('user')) {
+      try {
+        const res = await addToCartOneItem(cartItem)
+        console.log(res)
+        if (res.status===200) {
+          props.cart===""?props.setCart("1"):props.setCart("")
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    } else {
+      navigate("/singup&login");
+    }  
   };
 
+  const buyNow = async() =>{
+    const productData=[{ 
+      productid:items._id,
+    quantity:items.quantity,
+    size:items.size,
+    price:items.price,
+    title:items.title,
+    image:items.image[0]
+  }]
+  if (localStorage.getItem('user')) {
+    setProducts(productData)
+    setAdressModalShow(true)
+  } else {
+    navigate('/singup&login ')
+  }
+  }
+
+
+
+  useEffect(() => {
+    setInterval(() => {
+      if (sliderRef.current) {
+        sliderRef.current.slickNext();
+      }
+    }, 3000);
+  }, []);
+
   return (
-    <div>
+    <>
+    {loaderVisible?<div className="h-50vh d-flex align-items-center justify-content-center"><LoaderContent visible={loaderVisible}/></div>:<div>
       <div className="display-flex bg-fff media-d-block gap-3 p-3">
-        <div className="display-flex box-shadow-1 media-d-block gap-3 bg-fff ">
+        <div className="display-flex box-shadow-1 media-d-block gap-3 bg-fff w-60-noimp media-w-100">
           <div className="w-50-noimp media-w-100">
             <ProductCarousel images={items.image} />
           </div>
@@ -176,7 +192,7 @@ const ProductPage = () => {
                   </div>
                 </div>
               </div>
-              <div className="fw-500 text-orang mb-3 ">
+              <div className="fw-500 color-green mb-3 ">
                 ({Number.parseInt(100 - (100 * items.price) / items.mrp)}%OFF)
               </div>
             </div>
@@ -202,7 +218,7 @@ const ProductPage = () => {
                           const tempItem = { ...items };
                           tempItem.quantity = item;
                           setItems({ ...tempItem });
-                          setSelectQuantity(item);
+                          toast.info(`Your Selected Quantity : ${item}`)
                         }}
                       >
                         {item}
@@ -231,7 +247,7 @@ const ProductPage = () => {
                           const tempItem = { ...items };
                           tempItem.size = item;
                           setItems({ ...tempItem });
-                          setSelectSize(item);
+                          toast.info(`Your Selected Size : ${item}`)
                         }}
                       >
                         {item}
@@ -286,15 +302,14 @@ const ProductPage = () => {
                 </div>
               </div>
 
-              <hr />
+              <hr className="mb-0"/>
             </div>
 
-            <div className="d-flex w-100 position-sticky bottom-0 bg-fff gap-2">
-              <Button1 onClick={addToCart}>Add To Cart</Button1>
-              {/* <AddCartBtn className={"p-4 rounded-0 rounded-end w-100"} /> */}
-              <Button1>Buy Now</Button1>
+            <div className="d-flex w-100 position-sticky bottom-0 bg-fff gap-2 py-3">
+              <Button1 onClick={addToCart}><i class="fas fa-cart-plus"></i>Add To Cart</Button1>
+              <Button1 onClick={buyNow}><i class="fas fa-bolt-lightning"></i>Buy Now</Button1>
             </div>
-            <hr />
+            <hr className="mt-0"/>
             <div>
               <h5>Product Details</h5>
               <ul className="mb-0">
@@ -306,8 +321,11 @@ const ProductPage = () => {
         </div>
         <div className="advertice"></div>
       </div>
+
+      {/* Slick */}
+
       <div className="bg-fff box-shadow-1">
-        <Slider {...pops} className="pb-35">
+        <Slider {...pops} className="pb-35" ref={sliderRef}>
           {slickItems?.map((item, i) => (
             <Link
               key={i}
@@ -317,6 +335,7 @@ const ProductPage = () => {
                 getData(item._id);
                 document.body.scrollTop = 0;
                 document.documentElement.scrollTop = 0;
+                props.setProgress(100);
               }}
             >
               <img
@@ -333,7 +352,18 @@ const ProductPage = () => {
           ))}
         </Slider>
       </div>
-    </div>
+
+      <ModelCenter
+          show={adressModalShow}
+          onHide={() => setAdressModalShow(false)}
+          title={"Fill Out Your Details"}
+        >
+          <AddressFill quantity={quantity} products={products} setAdressModalShow={setAdressModalShow} cart={false}/>
+          
+          
+        </ModelCenter>
+    </div>}
+    </>
   );
 };
 

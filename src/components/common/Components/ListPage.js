@@ -1,122 +1,108 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import StarRatting from "../StarRatting";
 import BadgeGreen from "./BadgeGreen";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Moment from "react-moment";
 import moment from "moment";
-import axios from "axios";
 import Button1 from "./Button1";
+import { addToCartOneItem, getAllProduct } from "../service/api";
+import InfiniteScroll from 'react-infinite-scroll-component';
+import LoaderContent from "./LoaderContent";
 
 const ListPage = (props) => {
-  const [allItems, setAllItems] = useState([]);
-  const [user, setUser] = useState();
   const addtime = moment().add(+15, "days");
   const { listType } = useParams();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const api = "http://localhost:8080/api/product/all";
+  const [allItems, setAllItems] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1); 
 
-  const getPost = async () => {
-    await axios
-      .get(api)
-      .then((response) => {
-        const data = response.data;
-        if (listType == "upto94") {
-          const item = data.filter((item) => (item.price * 100) / item.mrp < 6);
-          console.log(listType);
-          setAllItems(item);
-        } else if (listType == "bestReview") {
-          const item = data.sort((a, b) => b.totleRatting - a.totleRatting);
-          console.log(listType);
-          setAllItems(item);
-        } else if (listType == "uptoRS30") {
-          const item = data.filter((item) => item.price < 30);
-          console.log(listType);
-          setAllItems(item);
-        } else if (listType == "best_man_woman_shirt") {
-          const filterData = data.filter(
-            (item) =>
-              (item.category == "MAN-SHIRT") | (item.category == "GIRL-SHIRT")
-          );
-          const filterPrice = filterData.filter((item) => item.price > 30);
-          setAllItems(filterPrice);
-        } else if (listType == "best_woman_collection") {
-          const filterCategory = data.filter(
-            (item) =>
-              (item.category == "GIRL-SHIRT") |
-              (item.category == "GIRL-T-SHIRT") |
-              (item.category == "GIRL-NIGHTDRESS")
-          );
-          setAllItems(filterCategory);
-        } else if (listType == "man_nightwear") {
-          const item = data.filter((item) => item.category == "MAN-NIGHTDRESS");
-          setAllItems(item);
-        } else if (listType == "woman_nightwear") {
-          const item = data.filter(
-            (item) => item.category == "GIRL-NIGHTDRESS"
-          );
-          setAllItems(item);
+  const getData = async () => {
+    const listTypeMap = {
+      'upto94':{query:"94%OFF"},
+      'bestReview':{query:"BESTREVIEW"},
+      'uptoRS30':{priceKey:"LT30"},
+      'best_man_woman_shirt':{query:"MAN-SHIRT,GIRL-SHIRT",priceKey:"GT30"},
+      'best_woman_collection':{query:"GIRL-SHIRT,GIRL-T-SHIRT,GIRL-NIGHTDRESS"},
+      'man_nightwear':{query:'MAN-NIGHTDRESS'},
+      'woman_nightwear':{query:'GIRL-NIGHTDRESS'},
+      'MAN-SHIRT':{query:'MAN-SHIRT'},
+      'MAN-T-SHIRT':{query:'MAN-T-SHIRT'},
+      'GIRL-SHIRT':{query:'GIRL-SHIRT'},
+      'GIRL-T-SHIRT':{query:'GIRL-T-SHIRT'}
+    }
+    try {
+      if (listTypeMap[listType]) {
+        const res = await getAllProduct(page,20,listTypeMap[listType]?.query,listTypeMap[listType]?.priceKey);
+        const newData = await res?.data
+        console.log(res)
+        if (newData?.length>0) {
+          setAllItems(prevData => [...prevData, ...newData]); // Append new data to existing data
+          setPage(prevPage => prevPage + 1); // Increment page for the next fetch
+        } else {
+          setHasMore(false); // No more data available
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const getUser = async () => {
-    const userToken = await JSON.parse(localStorage.getItem("user"));
-    const header = {
-      "auth-token": userToken,
-    };
-    if (localStorage.getItem("user")) {
-      await axios
-        .post(`http://localhost:8080/api/user/getuser`, null, {
-          headers: header,
-        })
-        .then((response) => {
-          console.log(response.data._id);
-          setUser(response.data._id);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    } else {
-      console.log("please login first");
+      } 
+      
+    } catch (error) {
+      console.log(error);
     }
   };
+ 
 
   const addToCart = async (item) => {
-    if (user) {
-      await axios.post("http://localhost:8080/api/cart/add",{
-        userId:user,
-        productId:item._id,
-        quantity:item.quantity,
-        size:item.size
-      })
+    if (localStorage.getItem('user')) {
+      const cartItem = {
+        productId: item._id,
+        quantity: item.quantity,
+        size: item.size,
+      }
+      try {
+        const res = await addToCartOneItem(cartItem)
+        if (res.status===200) {
+          props.cart===""?props.setCart('1'):props.setCart("")
+        }
+      } catch (error) {
+        
+      }
     } else {
-      navigate('/singup&login')
+      navigate("/singup&login");
     }
-    // console.log(item)
-
-    // await axios.post('http://localhost:8080/api/cart/add',)
   };
 
-  useEffect(() => {
-    getPost();
-    getUser();
-  }, []);
-
-  useEffect(() => {
+  useMemo(()=>{
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
-  }, []);
+    setPage(1)
+  },[listType])
 
-  // const showProduct = (i) =>{
-  //   console.log(items[i]._id)
-  //   localStorage.setItem('show',JSON.stringify(items[i]._id))
-  //   console.log(i)
-  // }
+  useEffect(() => {
+    props.setProgress(50);
+    setHasMore(true)
+    setAllItems([])
+    getData();
+    props.setProgress(100);
+  }, [listType]);
+
+  // useEffect(() => {
+  //   document.body.scrollTop = 0;
+  //   document.documentElement.scrollTop = 0;
+    
+  // }, []);
+
   return (
+    <>
+    {allItems?.length>0?<InfiniteScroll
+  dataLength={allItems.length} //This is important field to render the next data
+  next={getData}
+  hasMore={hasMore}
+  endMessage={
+    <p style={{ textAlign: 'center' }}>
+      <b>No More Product Found!</b>
+    </p>
+  }   
+>
     <div className="bg-color-fff bg-fff gap-2 padding-2 justify-content-center grid5 media-w-100 media-grid-2-47-47 w-90-noimpo mx-auto  smal-screen-py-3">
       {allItems &&
         allItems.map((item, i) => (
@@ -127,18 +113,19 @@ const ListPage = (props) => {
             <Link
               to={`/product/${item._id}`}
               className="text-decoration-none text-dark w-webkit"
+              onClick={() => props.setProgress(100)}
             >
               <div className="d-flex justify-content-center">
                 <img
                   src={item.image}
-                  className="h-200-noimpo object-fit-contain media-h-150"
+                  className="h-200-noimpo object-fit-contain media-h-150 w-webkit"
                 />
               </div>
               <div className="d-flex justify-content-center align-items-start flex-column">
                 <div className="text-start fw-600 text-black text-decoration-none trunket-2-line line-18 media-f-12 h-36 w-webkit">
                   {item.title}
                 </div>
-                <div className="display-flex media-d-block w-100 align-items-center gap-2 mb-2">
+                <div className="display-flex media-d-block w-100 align-items-center gap-2">
                   <StarRatting
                     size={14}
                     star={item.star}
@@ -162,7 +149,7 @@ const ListPage = (props) => {
                     </div>
                   </div>
                 </div>
-                <div className="fw-800 text-orang media-f-12 mb-2">
+                <div className="fw-800 color-green media-f-12 mb-2">
                   ({Number.parseInt(100 - (100 * item.price) / item.mrp)}%OFF)
                 </div>
                 <div className="fw-600 media-f-12 f-14 line-14">
@@ -174,11 +161,14 @@ const ListPage = (props) => {
                 </div>
               </div>
             </Link>
-            <Button1 onClick={() => addToCart(item)}>Add To Cart</Button1>
-            {/* <AddCartBtn className={'bg-danger'}/> */}
+            <Button1 onClick={() => addToCart(item)}>
+              <i class="fas fa-cart-plus"></i>Add To Cart
+            </Button1>
           </div>
         ))}
     </div>
+    </InfiniteScroll>:<div className="h-50vh d-flex align-items-center justify-content-center"><LoaderContent visible={true}/></div>}
+    </>
   );
 };
 

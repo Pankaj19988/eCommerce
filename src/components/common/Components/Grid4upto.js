@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import LoaderContent from "./LoaderContent";
 
 const Grid4upto = ({item,heading}) => {
   const [items,setItems]=useState([])
@@ -14,7 +15,7 @@ const Grid4upto = ({item,heading}) => {
   return (
     <div className="border-1px border-radius-5 box-shadow-1 cursor-pointer">
       <h2 className="f-20 fw-600">{heading}</h2>
-      <div className="grid-2">
+      {items.length===0?<LoaderContent visible={true}/>:<div className="grid-2">
         {
           items?.map((item,i)=>(
             <div key={i}>
@@ -34,8 +35,8 @@ const Grid4upto = ({item,heading}) => {
         </div>
           ))
         }
-      </div>
-      <div className="text-decoration-none f-15 cursor-pointer hover-bo-light fw-600 color-darkpink">See More</div>
+      </div>}
+      <div className="text-decoration-none f-15 cursor-pointer hover-bo-light fw-600 color-nav-blue">See More</div>
     </div>
   );
 };

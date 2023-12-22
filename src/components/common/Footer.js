@@ -1,85 +1,125 @@
 import React from 'react'
 import '../common/style/footer.css'
 import { Link } from 'react-router-dom'
+import logo from '../../nav-logo.png'
 
 const Footer = () => {
 
   return (
-    <>
-    <footer className="new_footer_area bg_color">
-            <div className="new_footer_top">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-lg-3 col-md-6">
-                            <div className="f_widget company_widget wow fadeInLeft" data-wow-delay="0.2s" style={{visibility: "visible", animationDelay: "0.2s", animationName: "fadeInLeft"}}>
-                                <h3 className="f-title f_600 t_color f_size_18">Get in Touch</h3>
-                                <p>Don’t miss any updates of our new templates and extensions.!</p>
-                                <form action="#" className="f_subscribe_two mailchimp" method="post" noValidate={true} _lpchecked="1">
-                                    <input type="text" name="EMAIL" className="form-control memail" placeholder="Email"/>
-                                    <button className="btn btn_get btn_get_two" type="submit">Subscribe</button>
-                                    <p className="mchimp-errmessage" style={{display: "none"}}></p>
-                                    <p className="mchimp-sucmessage" style={{display: "none"}}></p>
-                                </form>
-                            </div>
-                        </div>
-                        <div className="col-lg-3 col-md-6">
-                            <div className="f_widget about-widget pl_70 wow fadeInLeft" data-wow-delay="0.4s" style={{visibility: "visible", animationDelay: "0.4s", animationName: "fadeInLeft"}}>
-                                <h3 className="f-title f_600 t_color f_size_18">Download</h3>
-                                <ul className="list-unstyled f_list">
-                                    <li><Link href="#">Company</Link></li>
-                                    <li><Link href="#">Android App</Link></li>
-                                    <li><Link href="#">ios App</Link></li>
-                                    <li><Link href="#">Desktop</Link></li>
-                                    <li><Link href="#">Projects</Link></li>
-                                    <li><Link href="#">My tasks</Link></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="col-lg-3 col-md-6">
-                            <div className="f_widget about-widget pl_70 wow fadeInLeft" data-wow-delay="0.6s" style={{visibility: "visible", animationDelay: "0.6s", animationName: "fadeInLeft"}}>
-                                <h3 className="f-title f_600 t_color f_size_18">Help</h3>
-                                <ul className="list-unstyled f_list">
-                                    <li><Link href="#">FAQ</Link></li>
-                                    <li><Link href="#">Term &amp; conditions</Link></li>
-                                    <li><Link href="#">Reporting</Link></li>
-                                    <li><Link href="#">Documentation</Link></li>
-                                    <li><Link href="#">Support Policy</Link></li>
-                                    <li><Link href="#">Privacy</Link></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div className="col-lg-3 col-md-6">
-                            <div className="f_widget social-widget pl_70 wow fadeInLeft" data-wow-delay="0.8s" style={{visibility: "visible", animationDelay: "0.8s", animationName: "fadeInLeft"}}>
-                                <h3 className="f-title f_600 t_color f_size_18">Team Solutions</h3>
-                                <div className="f_social_icon">
-                                    <Link href="#" className="fab fa-facebook"></Link>
-                                    <Link href="#" className="fab fa-twitter"></Link>
-                                    <Link href="#" className="fab fa-linkedin"></Link>
-                                    <Link href="#" className="fab fa-pinterest"></Link>
-                                </div>
-                            </div>
+    <footer class="footer-section">
+    <div class="container">
+        <div class="footer-cta pt-5 ">
+            <div class="row">
+                <div class="col-xl-4 col-md-4 mb-30">
+                    <div class="single-cta">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="cta-text">
+                            <h4>Find us</h4>
+                            <span>Akshya Nagar 1st Block 1st Cross, Rammurthy nagar, Bangalore-560016 </span>
                         </div>
                     </div>
                 </div>
-                <div className="footer_bg">
-                    <div className="footer_bg_one"></div>
-                    <div className="footer_bg_two"></div>
-                </div>
-            </div>
-            <div className="footer_bottom">
-                <div className="container">
-                    <div className="row align-items-center">
-                        <div className="col-lg-6 col-sm-7">
-                            <p className="mb-0 f_400">© cakecounter Inc.. 2019 All rights reserved.</p>
+                <div class="col-xl-4 col-md-4 mb-30">
+                    <div class="single-cta">
+                        <i class="fas fa-phone"></i>
+                        <div class="cta-text">
+                            <h4>Call us</h4>
+                            <span>+91 1234567890</span>
                         </div>
-                        <div className="col-lg-6 col-sm-5 text-right">
-                            <p>Made with <i className="icon_heart"></i> in <Link href="http://cakecounter.com" target="_blank">CakeCounter</Link></p>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-4 mb-30">
+                    <div class="single-cta">
+                        <i class="far fa-envelope-open"></i>
+                        <div class="cta-text">
+                            <h4>Mail us</h4>
+                            <span>contact@gmail.com</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </footer>
-        </>
+        </div>
+        <div class="footer-content">
+            <div class="row">
+                <div class="col-xl-4 col-lg-4 mb-50">
+                    <div class="footer-widget">
+                        <div class="footer-logo">
+                            <Link to="index.html"><img src={logo} class="img-fluid" alt="logo" /></Link>
+                        </div>
+                        <div class="footer-text">
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
+                        </div>
+                        {/* <div class="footer-social-icon">
+                            <span>Follow us</span>
+                            <ul class="social_icon">
+                              <li><Link to={"/"}><i class="fa-brands fa-facebook-f"></i></Link></li>
+                              <li><Link to={"/"}><i class="fa-brands fa-twitter"></i></Link></li>
+                              <li><Link to={"/"}><i class="fa-brands fa-instagram"></i></Link></li>
+                              <li><Link to={"/"}><i class="fa-brands fa-youtube"></i></Link></li>
+                          </ul>
+                        </div> */}
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 mb-30">
+                    <div class="footer-widget">
+                        <div class="footer-widget-heading">
+                            <h3>Useful Links</h3>
+                        </div>
+                        <ul>
+                            <li><Link to={"/"}>Our Team</Link></li>
+                            <li><Link to={"/"}>About Us</Link></li>
+                            <li><Link to={"/"}>Our Gallery</Link></li>
+                            <li><Link to={"/"}>Selection Process</Link></li>
+                            <li><Link to={"/"}>FAQ</Link></li>
+                            <li><Link to={"/"}>Sponsorship</Link></li>
+                            <li><Link to={"/"}>Our Policies</Link></li>
+                            <li><Link to={"/"}>Our Team</Link></li>
+                            <li><Link to={"/"}>Contact us</Link></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-lg-4 col-md-6 mb-50">
+                    <div class="footer-widget">
+                        <div class="footer-widget-heading">
+                            <h3>Subscribe</h3>
+                        </div>
+                        <div class="footer-text mb-25">
+                            <p>Don’t miss to subscribe to our new feeds, kindly fill the form below.</p>
+                        </div>
+                        <div class="subscribe-form">
+                            <form action={"/"}>
+                                <input type="text" placeholder="Email Address" />
+                                <button><i class="fab fa-telegram-plane"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright-area">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 text-center text-lg-left">
+                    <div class="copyright-text">
+                        <p className='color-fff'>Copyright &copy; 2023, All Right Reserved</p>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-6 d-none d-lg-block text-right">
+                    <div class="footer-menu">
+                        <ul>
+                            <li><Link to={"/"}>Home</Link></li>
+                            <li><Link to={"/"}>Terms</Link></li>
+                            <li><Link to={"/"}>Privacy</Link></li>
+                            <li><Link to={"/"}>Policy</Link></li>
+                            <li><Link to={"/"}>Contact</Link></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
   )
 }
 

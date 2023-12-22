@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import axios from 'axios'
 import { Link } from "react-router-dom";
+import { getAllProduct } from "../service/api";
+import LoaderContent from "./LoaderContent";
 
 
 const SlickPic = () => {
@@ -9,14 +11,14 @@ const SlickPic = () => {
   const [items,setItems]=useState([])
   
   const getPost = async()=>{
-    await axios.get("http://localhost:8080/api/product/all")
-    .then((response)=>{
-      const data = response.data
-      const filterCategory = data.filter((item)=>item.category=='GIRL-SHIRT' | item.category=='GIRL-T-SHIRT' | item.category=='GIRL-NIGHTDRESS')
-      setItems(filterCategory.slice(0,12))
-    }).catch((error)=>{
+    try {
+      const res = await getAllProduct(1,12,"GIRL-SHIRT,GIRL-T-SHIRT,GIRL-NIGHTDRESS");
+      const data = res?.data
+      setItems(data)
+    } catch (error) {
       console.log(error)
-    })
+    }
+   
   }
   useEffect(()=>{
     getPost();
@@ -62,7 +64,7 @@ const SlickPic = () => {
     
     <div className="bg-fff box-shadow-1 border-radius-5 mt-3  d-flex flex-column justify-content-center py-3">
       <h3 className="m-0 fw-600 text-dark media-f-14 mx-3 ">Best Woman Collection</h3>
-        <Link to='/list/best_woman_collection'>
+      {items.length===0?<LoaderContent visible={true}/>:<Link to='/list/best_woman_collection'>
       <Slider {...props} className="pb-35">
         {
           items?.map((item,i)=>(
@@ -76,7 +78,7 @@ const SlickPic = () => {
           ))
         }
       </Slider>
-      </Link>
+      </Link>}
     </div>
   );
 };

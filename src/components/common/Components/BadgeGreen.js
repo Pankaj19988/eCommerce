@@ -1,11 +1,12 @@
 import React from 'react'
-import '../style/badge_green.css'
+import qassured from '../../../Q-Assured.png'
 
-const BadgeGreen = (props) => {
+
+const BadgeGreen = () => {
   return (
-    <div className="badge-wrapper d-flex">
-    <div className={`badge badge-shiny badge-green ${props.className}`}>{props.name}</div>
-  </div>
+    <div>
+    <img src={qassured} alt='f-assured' className='h-20 '/>
+    </div>
   )
 }
 

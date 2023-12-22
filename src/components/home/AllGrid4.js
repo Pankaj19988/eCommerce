@@ -2,42 +2,44 @@ import React, { useEffect, useState } from 'react'
 import Product4Grid from '../common/Components/Product4Grid'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { getAllProduct } from '../common/service/api'
 
 
 
-const AllGrid4 = () => {
+const AllGrid4 = (props) => {
 
-  const [allData,setAllData] = useState([])
+  const [item1,setItem1] = useState([])
+  const [item2,setItem2] = useState([])
+  const [item3,setItem3] = useState([])
 
-  // const [item1,setItem1] = useState ([])
-  // const [item2,setItem2] = useState ([])
+  
+  const heading1 = "Up to 94% off | Click And Shop Now"
+  const heading2 = "Top Best Review Product"
+  const heading3 = "Up to ₹30 Deal"  
 
   const getData = async() =>{
-   await axios.get('http://localhost:8080/api/product/all')
-    .then((response)=>{
-      setAllData(response.data)
-    })
+    try {
+     const res1 = await getAllProduct(1,4,"94%OFF");
+     const res2 = await getAllProduct(1,4,"BESTREVIEW");
+     const res3 = await getAllProduct(1,4,"","LT30");
+     setItem1(res1.data)
+     setItem2(res2.data)
+     setItem3(res3.data)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(()=>{
     getData();
   },[])
  
-  const item1 = allData.filter((item)=>item.price*100/item.mrp<6)
-  const heading1 = "Up to 94% off | Click And Shop Now"
+   
 
-  const item2 = allData.sort((a, b) => b.totleRatting - a.totleRatting);
-  const heading2 = "Top Best Review Product"
-
-  const item3 = allData.filter((item)=>item.price<30)
-  const heading3 = "Up to ₹30 Deal"
-
-  const item4 = "https://fakestoreapi.com/products"
-  const heading4 = "Best Selling Product"
 
   return (
     <div className='grid4 p-3 justify-content-center'>
-      <Link className='text-decoration-none text-dark hover-shadow-10' to={"/list/upto94"}><Product4Grid items={item1} gridHeading={heading1}/></Link>
+      <Link className='text-decoration-none text-dark hover-shadow-10' to={"/list/upto94"} onClick={()=>props.setProgress(100)}><Product4Grid items={item1} gridHeading={heading1}/></Link>
       <Link className='text-decoration-none text-dark hover-shadow-10' to={"/list/bestReview"}><Product4Grid items={item2} gridHeading={heading2}/></Link>
       <Link className='text-decoration-none text-dark hover-shadow-10' to={"/list/uptoRS30"}><Product4Grid items={item3} gridHeading={heading3}/></Link>
       {/* <Link className='text-decoration-none text-dark' to={"/list"}><Product4Grid api={item4} gridHeading={heading4}/></Link> */}
