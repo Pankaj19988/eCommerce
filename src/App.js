@@ -46,7 +46,6 @@ function App() {
           </Route>
           
           <Route exact path="/form" element={<Post />} />
-
           <Route exact path="/singup&login" element={<Singup_Login setProgress={setProgress}/>} />
 
         </Routes>
