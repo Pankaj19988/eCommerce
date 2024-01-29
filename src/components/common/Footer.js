@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
     <footer class="footer-section">
-    <div class="container">
+    {/* <div class="container">
         <div class="footer-cta pt-5 ">
             <div class="row">
                 <div class="col-xl-4 col-md-4 mb-30">
@@ -49,15 +49,6 @@ const Footer = () => {
                         <div class="footer-text">
                             <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
                         </div>
-                        {/* <div class="footer-social-icon">
-                            <span>Follow us</span>
-                            <ul class="social_icon">
-                              <li><Link to={"/"}><i class="fa-brands fa-facebook-f"></i></Link></li>
-                              <li><Link to={"/"}><i class="fa-brands fa-twitter"></i></Link></li>
-                              <li><Link to={"/"}><i class="fa-brands fa-instagram"></i></Link></li>
-                              <li><Link to={"/"}><i class="fa-brands fa-youtube"></i></Link></li>
-                          </ul>
-                        </div> */}
                     </div>
                 </div>
                 <div class="col-xl-4 col-lg-4 col-md-6 mb-30">
@@ -96,7 +87,7 @@ const Footer = () => {
                 </div>
             </div>
         </div>
-    </div>
+    </div> */}
     <div class="copyright-area">
         <div class="container">
             <div class="row">
@@ -112,7 +103,6 @@ const Footer = () => {
                             <li><Link to={"/"}>Terms</Link></li>
                             <li><Link to={"/"}>Privacy</Link></li>
                             <li><Link to={"/"}>Policy</Link></li>
-                            <li><Link to={"/"}>Contact</Link></li>
                         </ul>
                     </div>
                 </div>
