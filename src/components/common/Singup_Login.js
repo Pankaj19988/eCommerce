@@ -17,7 +17,7 @@ import {
 } from "./service/api";
 import singUpPng from "../../singUpPng.png";
 import singInPng from "../../singInPng.png";
-import moment from "moment";
+import PointShow from "./PointShow";
 
 
 
@@ -471,7 +471,7 @@ const Singup_Login = () => {
                   onHide={() => setTermModel(false)}
                   title={"Term & Condition"}
                 >
-                  hellow
+                  <PointShow name="terms"/>
                 </ModelCenter>
               </div>
               <button

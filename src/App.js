@@ -4,7 +4,6 @@ import Home from "./components/home/Home";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-// import Post from './Post';
 import { useState } from "react";
 import Singup_Login from "./components/common/Singup_Login";
 import "bootstrap/dist/css/bootstrap.min.css";

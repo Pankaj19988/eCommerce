@@ -5,14 +5,11 @@ import { Outlet } from "react-router";
 
 
 const UnderNavbar = (props) => {
-  
+
   return (
     <>
-      {/* <div className='position-sticky top-0 z-2'> */}
-        <NavBar cart={props.cart}/>
-      {/* </div> */}
+      <NavBar cart={props.cart} />
       <Outlet />
-      
       <Footer />
     </>
   );
