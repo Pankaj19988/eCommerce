@@ -1,6 +1,7 @@
 import axios from "axios";
 import { toast } from "react-toastify";
-import { AUTH, PRODUCT, USER, CART, ORDER, IP, CASHFREE } from "./endPoints";
+import { AUTH, PRODUCT, USER, CART, ORDER, IP, CASHFREE, RAZORPAY } from "./endPoints";
+import { useNavigate } from "react-router";
 
 
 
@@ -285,6 +286,37 @@ export const cashfreeCreatOrder = async (order_detail)=>{
 export const paymentStatusByOrderId = async (order_id)=>{
   try {
     const res = await axios.get(`${CASHFREE.PAYMENT_STATUS_BY_ID}${order_id}`);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+}
+
+// RazorPay API Section //
+export const razorPayCreatOrder = async (order_detail)=>{
+  try {
+    const header = {
+      "auth-token": userToken,
+    };
+    const res = await axios.post(
+      RAZORPAY.ORDER_CREATE,
+      {
+        products: order_detail.products,
+        address: order_detail.address,
+        amount: order_detail.amount,
+        cart:order_detail.cart
+      },
+      { headers: header }
+    );
+    return res;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getRazorPayPaymentStatus=async(paymentId)=>{
+  try {
+    const res = await axios.get(`${RAZORPAY.PAYMENT_STATUS}${paymentId}`);
     return res;
   } catch (error) {
     throw error;

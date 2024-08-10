@@ -143,6 +143,8 @@ const ProductPage = (props) => {
   }
   }
 
+  
+
 
 
   useEffect(() => {

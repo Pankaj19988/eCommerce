@@ -10,77 +10,103 @@ const OrderStatus = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
   const paramValue = queryParams.get("order_id");
+  const paymentStatus = queryParams.get('status')
   const [statusImage, setStatusImage] = useState("");
   const [status, setstatus] = useState(false);
   const [orderData, setOrderData] = useState("");
   const [repeatApiCallingStop, setRepeatApiCallingStop] = useState(true);
   const [loaderVisible,setLoaderVisible] = useState(false)
 
-  const checkPaymentStatus = async () => {
+  // const checkPaymentStatus = async () => {
+  //   setLoaderVisible(true)
+  //   if (paramValue) {
+  //     try {
+  //       const res = await paymentStatusByOrderId(paramValue);
+  //       setOrderData(res.data);
+  //       if (res.data.order_status === "PAID" && repeatApiCallingStop) {
+  //         const response = await creatOrder(paramValue);
+  //         if (response.status === 200) {
+  //           setStatusImage(orderSuccessImg);
+  //           setstatus(true);
+  //           setRepeatApiCallingStop(false);
+  //         }
+  //       } else {
+  //         setStatusImage(paymentFail);
+  //         setstatus(false);
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   } else {
+  //     navigate("/");
+  //   }
+  //   setLoaderVisible(false)
+  // };
+
+  // const tryAgain = () => {
+  //   const cashfree = window.Cashfree({
+  //     mode: "sandbox", // or 'production'
+  //   });
+  //   cashfree
+  //     .checkout({
+  //       paymentSessionId: orderData.payment_session_id,
+  //       returnUrl:
+  //         "http://localhost:3000/your_order_status?order_id={order_id}", // Replace with your actual return URL
+  //     })
+  //     .then((result) => {
+  //       if (result.error) {
+  //         alert(result.error.message);
+  //       }
+  //       if (result.redirect) {
+  //         console.log("Redirection");
+  //       }
+  //     });
+  // };
+
+  // useEffect(() => {
+  //   checkPaymentStatus();
+  // }, []);
+
+const successOrder = async()=>{
+  try {
+    await creatOrder(paramValue);
+  } catch (error) {
+    throw error
+  }
+}
+
+  const tryAgain = ()=>{
+    console.log("Try Again")
+  }
+
+  useEffect(()=>{
     setLoaderVisible(true)
-    if (paramValue) {
-      try {
-        const res = await paymentStatusByOrderId(paramValue);
-        setOrderData(res.data);
-        if (res.data.order_status === "PAID" && repeatApiCallingStop) {
-          const response = await creatOrder(paramValue);
-          if (response.status === 200) {
-            setStatusImage(orderSuccessImg);
-            setstatus(true);
-            setRepeatApiCallingStop(false);
-          }
-        } else {
-          setStatusImage(paymentFail);
-          setstatus(false);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      navigate("/");
-    }
-    setLoaderVisible(false)
-  };
+if (paymentStatus === "success") {
+  setStatusImage(orderSuccessImg);
+  successOrder();
+  setLoaderVisible(false)
+} else {
+  setStatusImage(paymentFail)
+  setLoaderVisible(false)
+}
+  },[paymentStatus])
 
-  const tryAgain = () => {
-    const cashfree = window.Cashfree({
-      mode: "sandbox", // or 'production'
-    });
-    cashfree
-      .checkout({
-        paymentSessionId: orderData.payment_session_id,
-        returnUrl:
-          "http://localhost:3000/your_order_status?order_id={order_id}", // Replace with your actual return URL
-      })
-      .then((result) => {
-        if (result.error) {
-          alert(result.error.message);
-        }
-        if (result.redirect) {
-          console.log("Redirection");
-        }
-      });
-  };
-
-  useEffect(() => {
-    checkPaymentStatus();
-  }, []);
-
+console.log("paymentStatus",paymentStatus)
   return (
     <>
     {loaderVisible?<div className="h-50vh d-flex align-items-center justify-content-center"><LoaderContent visible={loaderVisible}/></div>:<div className="d-flex flex-column align-items-center mx-auto w-fit-cont gap-4 mb-3 p-3 max-w-500px">
         <div className="text-center">
           <img src={statusImage} alt="image" className="w-100 " />
           <h1 className="text-center">
-            {status
+            {status=== "success"
               ? "Your Order Is Confirmed!"
-              : !status
+              : !status=== "success"
               ? "Your Payment Fail Please Try Again"
               : ""}
           </h1>
         </div>
       
-      {status ? (
+      {paymentStatus === "success" ? (
         <Button
           className="w-100 px-3"
           onClick={() => {
@@ -89,7 +115,7 @@ const OrderStatus = () => {
         >
           Continue Shopping
         </Button>
-      ) : !status ? (
+      ) : !paymentStatus ==="success" ? (
         <Button className="w-100 px-3" onClick={tryAgain}>
           Try Again
         </Button>

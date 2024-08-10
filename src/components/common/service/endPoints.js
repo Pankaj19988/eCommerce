@@ -43,3 +43,9 @@ export const CASHFREE = {
   ORDER_CREATE: BASE_URL + "api/cashfree/creatorder",
   PAYMENT_STATUS_BY_ID: BASE_URL + "api/cashfree/get_payment_status/"
 }
+
+export const RAZORPAY={
+  ORDER_CREATE: BASE_URL + "api/razorpay/creatorder",
+  PAYMENT_STATUS:BASE_URL + "api/razorpay/payment_status/",
+  
+}
