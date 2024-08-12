@@ -72,6 +72,7 @@ const YourCart = (props) => {
     const cartobjectid = e.target.id
     try {
       await updateCartSize(size,cartobjectid)
+      cartData();
     } catch (error) {
       console.log(error)
     }
