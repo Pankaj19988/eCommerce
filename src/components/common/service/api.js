@@ -285,7 +285,7 @@ export const cashfreeCreatOrder = async (order_detail)=>{
 
 export const paymentStatusByOrderId = async (order_id)=>{
   try {
-    const res = await axios.get(`${CASHFREE.PAYMENT_STATUS_BY_ID}${order_id}`);
+    const res = await axios.get(`${CASHFREE.PAYMENT_STATUS}${order_id}`);
     return res;
   } catch (error) {
     throw error;
